@@ -393,8 +393,6 @@ print(np.mean(orig_img,axis = (0,1)))
 txtout = ""
 txt = open("shapes.txt","w")
 cv.imshow("original image",orig_img)
-#cv.imshow("out",imgout)
-#cv.waitKey()
 start = time.perf_counter_ns()
 generateimage()
 end = time.perf_counter_ns()
