@@ -25,7 +25,7 @@ if orig_img is None:
 
 
 weightmap = None
-#weightmap = cv.imread("walterweight.png")
+#weightmap = cv.imread("")
 
 print(orig_img.shape)
 imgy = orig_img.shape[0]
