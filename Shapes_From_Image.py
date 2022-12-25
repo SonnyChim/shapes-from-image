@@ -1,4 +1,3 @@
-from math import ceil
 import cv2 as cv
 import numpy as np
 import time
@@ -8,24 +7,21 @@ groupsizetriangles = 0
 groupsizecircles = 0
 groupsizetotal = groupsizerectangles + groupsizetriangles + groupsizecircles
 grouptoppercent = 5
-grouptop = ceil(grouptoppercent / 100 * groupsizetotal)
+grouptop = np.ceil(grouptoppercent / 100 * groupsizetotal).astype(int)
 children = groupsizetotal//grouptop
 evolvegroupsize = children * grouptop
-generations = 10
-targetshapes = 100
-targetdiff = 0000
+generations = 30
+targetshapes = 270
+targetdiff = 10000000000
 randfactor = 1
-
-
 
 orig_img = cv.imread("rcimg.png")
 if orig_img is None:
     print('Could not open or find the image')
-    exit(0)
-
+    raise SystemExit
 
 weightmap = None
-#weightmap = cv.imread("")
+#weightmap = cv.imread("walterweight.png")
 
 print(orig_img.shape)
 imgy = orig_img.shape[0]
@@ -101,7 +97,7 @@ def drawtri(img,values):
 def drawcir(img,values):
     cv.circle(img,(int(values[0]),int(values[1])),int(values[2]),(int(values[3]),int(values[4]),int(values[5])),-1)
 
-if weightmap == None:
+if weightmap is None:
     def gen0(img,diffold):
         groupval = np.zeros((groupsizetotal,9))
         groupdiff = np.zeros(groupsizetotal)
@@ -191,7 +187,7 @@ def mouseinput(event,x,y,flags,param):
             drawing = False
 
 
-if weightmap == None:
+if weightmap is None:
     def inputshape(img,diffold):
         cv.imshow("draw a rectangle", orig_img)
         global drawing,running
@@ -225,7 +221,7 @@ else:
         diff = diffold - shapediffbefore + shapediffafter
         return (np.append(values,(0,0)),),(diff,),("r",)
 
-if weightmap == None:
+if weightmap is None:
     def genx(inputvalues,shape,img,diffold):
         groupdiff = np.zeros(evolvegroupsize)
         outputvalues = inputvalues
@@ -355,7 +351,7 @@ def createshape(diffold,img):
 
 def generateimage():
     global running
-    if weightmap == None:
+    if weightmap is None:
         diffold = np.sum(np.abs(np.subtract(orig_img,imgout,dtype = np.int16)))
     else:
         diffold = np.sum(np.abs(np.subtract(orig_img,imgout,dtype = np.int16)) * weightmap)
@@ -373,8 +369,8 @@ def generateimage():
     if running:
         print(f"shape {shapes}, difference: {diffold/(imgx*imgy*3)}")
 
-# manualmode = True
-manualmode = False
+manualmode = True
+# manualmode = False
 if manualmode:
     groupsizerectangles = 100
     groupsizetotal = groupsizerectangles
@@ -390,9 +386,12 @@ running = True
 imgout = np.zeros((imgy, imgx, 3),dtype=np.uint8)
 cv.rectangle(imgout,(0,0),(imgx,imgy),np.mean(orig_img,axis = (0,1)),-1)
 print(np.mean(orig_img,axis = (0,1)))
-txtout = ""
+backgroundcolor = np.mean(orig_img,axis = (0,1))
+txtout = f"r(0,0,{imgx},{imgy},{int(backgroundcolor[0])},{int(backgroundcolor[1])},{int(backgroundcolor[2])})"
 txt = open("shapes.txt","w")
 cv.imshow("original image",orig_img)
+#cv.imshow("out",imgout)
+#cv.waitKey()
 start = time.perf_counter_ns()
 generateimage()
 end = time.perf_counter_ns()
