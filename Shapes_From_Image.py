@@ -20,6 +20,7 @@ if orig_img is None:
     print('Could not open or find the image')
     raise SystemExit
 
+
 weightmap = None
 #weightmap = cv.imread("walterweight.png")
 
@@ -86,6 +87,8 @@ def randvalues(value,shape,factor):
                 outputvalue[i] = imgx
             if outputvalue[i] > imgy and i == 1:
                 outputvalue[i] = imgy
+            if outputvalue[i] <= 1 and i == 2:
+                outputvalue[i] = 2
     return outputvalue
 
 def drawrect(img,values):
@@ -370,7 +373,7 @@ def generateimage():
         print(f"shape {shapes}, difference: {diffold/(imgx*imgy*3)}")
 
 manualmode = True
-# manualmode = False
+manualmode = False
 if manualmode:
     groupsizerectangles = 100
     groupsizetotal = groupsizerectangles
