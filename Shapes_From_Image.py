@@ -2,9 +2,9 @@ import cv2 as cv
 import numpy as np
 import time
 
-groupsizerectangles = 0
+groupsizerectangles = 100
 groupsizetriangles = 0
-groupsizecircles = 100
+groupsizecircles = 0
 groupsizetotal = groupsizerectangles + groupsizetriangles + groupsizecircles
 grouptoppercent = 5
 grouptop = np.ceil(grouptoppercent / 100 * groupsizetotal).astype(int)
