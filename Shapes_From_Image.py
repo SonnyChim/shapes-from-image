@@ -2,15 +2,15 @@ import cv2 as cv
 import numpy as np
 import time
 
-groupsizerectangles = 100
+groupsizerectangles = 0
 groupsizetriangles = 0
-groupsizecircles = 0
+groupsizecircles = 100
 groupsizetotal = groupsizerectangles + groupsizetriangles + groupsizecircles
 grouptoppercent = 5
 grouptop = np.ceil(grouptoppercent / 100 * groupsizetotal).astype(int)
 children = groupsizetotal//grouptop
 evolvegroupsize = children * grouptop
-generations = 30
+generations = 10
 targetshapes = 270
 targetdiff = 10000000000
 randfactor = 1
@@ -310,7 +310,7 @@ def evolve(gen,img,inputvalues,shape,diffold):
                 outputshape[y + x * children] = shape[x]
             outputvalues[children - 1 + x * children] = inputvalues[x]
             outputshape[children - 1 + x * children] = shape[x]
-        outputvalues = outputvalues.astype(np.uint16)
+        outputvalues = outputvalues.astype(np.int16)
         outputdiff = genx(outputvalues,outputshape,img,diffold)
         indeces = outputdiff.argsort()
         return outputvalues[indeces][0:grouptop],outputdiff[indeces][0:grouptop],outputshape[indeces][0:grouptop]
@@ -337,15 +337,15 @@ def createshape(diffold,img):
         if diff[0]<diffold:
             if shape[0] == "r":
                 drawrect(imgout,values[0])
-                values = values[0].astype(np.uint16)
+                values = values[0].astype(np.int16)
                 txtout += f"r({values[0]},{values[2]},{values[1]-values[0]},{values[3]-values[2]},{values[4]},{values[5]},{values[6]})\n"
             elif shape[0] == "t":
                 drawtri(imgout,values[0])
-                values = values[0].astype(np.uint16)
+                values = values[0].astype(np.int16)
                 txtout += f"t({values[0]},{values[1]},{values[2]},{values[3]},{values[4]},{values[5]},{values[6]},{values[7]},{values[8]})\n"
             elif shape[0] == "c":
                 drawcir(imgout,values[0])
-                values = values[0].astype(np.uint16)
+                values = values[0].astype(np.int16)
                 txtout += f"c({values[0]},{values[1]},{values[2]},{values[3]},{values[4]},{values[5]})\n"
             diffold = diff[0]
             return diffold
