@@ -2,18 +2,30 @@ import cv2 as cv
 import numpy as np
 import time
 
+# Options VVVVVV
+
+# Only works with rectangles
+manualmode = False
+
+# Choose how many of each shape each cycle starts with
 groupsizerectangles = 100
 groupsizetriangles = 0
 groupsizecircles = 0
+
+# Evolution parameters
+generations = 10        # How many times to evolve per cycle
+grouptoppercent = 5     # Top percent of shapes move to next evolution
+randfactor = 1          # Randomness factor
+
+# Program stops when both targets are met
+targetshapes = 270
+targetdiff = 10000000000
+
+
 groupsizetotal = groupsizerectangles + groupsizetriangles + groupsizecircles
-grouptoppercent = 5
 grouptop = np.ceil(grouptoppercent / 100 * groupsizetotal).astype(int)
 children = groupsizetotal//grouptop
 evolvegroupsize = children * grouptop
-generations = 10
-targetshapes = 270
-targetdiff = 10000000000
-randfactor = 1
 
 orig_img = cv.imread("rcimg.png")
 if orig_img is None:
@@ -372,8 +384,6 @@ def generateimage():
     if running:
         print(f"shape {shapes}, difference: {diffold/(imgx*imgy*3)}")
 
-manualmode = True
-manualmode = False
 if manualmode:
     groupsizerectangles = 100
     groupsizetotal = groupsizerectangles
@@ -388,16 +398,15 @@ if manualmode:
 running = True
 imgout = np.zeros((imgy, imgx, 3),dtype=np.uint8)
 cv.rectangle(imgout,(0,0),(imgx,imgy),np.mean(orig_img,axis = (0,1)),-1)
-print(np.mean(orig_img,axis = (0,1)))
 backgroundcolor = np.mean(orig_img,axis = (0,1))
 txtout = f"r(0,0,{imgx},{imgy},{int(backgroundcolor[0])},{int(backgroundcolor[1])},{int(backgroundcolor[2])})"
 txt = open("shapes.txt","w")
 cv.imshow("original image",orig_img)
-#cv.imshow("out",imgout)
-#cv.waitKey()
+
 start = time.perf_counter_ns()
 generateimage()
 end = time.perf_counter_ns()
+
 print(f"Done in {(end-start)/10**9}")
 txt.write(txtout)
 txt.close
