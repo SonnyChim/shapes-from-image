@@ -1,0 +1,4 @@
+*.png
+*.txt
+!rcimg.png
+!requirements.txt
